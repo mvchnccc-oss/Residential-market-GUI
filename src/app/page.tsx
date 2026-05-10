@@ -47,7 +47,6 @@ export default function Dashboard() {
   }, {} as Record<string, number>);
   const mostRequestedStyle = Object.entries(styleCounts).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
 
-  // Top representative by total deal value
   const repDeals = representatives.map(rep => {
     const repAgreements = agreements.filter(a => a.representativeId === rep.id);
     const totalValue = repAgreements.reduce((sum, a) => sum + a.price, 0);
@@ -55,20 +54,18 @@ export default function Dashboard() {
   });
   const topRep = repDeals.sort((a, b) => b.totalValue - a.totalValue)[0];
 
-  // Units per representative
   const unitsPerRep = representatives.map(rep => ({
     name: rep.name,
     units: properties.filter(p => p.representativeId === rep.id).length,
   }));
 
-  // Total tours per client
   const toursPerClient = clients.map(client => ({
     name: client.name,
     tours: tours.filter(t => t.clientId === client.id).length,
   }));
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
         <p className="text-muted-foreground">Overview of your residential marketplace</p>
