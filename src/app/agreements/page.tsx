@@ -103,7 +103,7 @@ export default function AgreementsPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -118,11 +118,11 @@ export default function AgreementsPage() {
           <TableBody>
             {agreements.map((agreement) => (
               <TableRow key={agreement.id}>
-                <TableCell className="font-medium">{getClientName(agreement.clientId)}</TableCell>
-                <TableCell>{getPropertyTitle(agreement.propertyId)}</TableCell>
-                <TableCell>{getRepresentativeName(agreement.representativeId)}</TableCell>
-                <TableCell>EGP {agreement.price.toLocaleString()}</TableCell>
-                <TableCell>{new Date(agreement.date).toLocaleDateString()}</TableCell>
+                <TableCell className="font-medium text-nowrap">{getClientName(agreement.clientId)}</TableCell>
+                <TableCell className=' text-nowrap'>{getPropertyTitle(agreement.propertyId)}</TableCell>
+                <TableCell className=' text-nowrap'>{getRepresentativeName(agreement.representativeId)}</TableCell>
+                <TableCell className=' text-nowrap'>EGP {agreement.price.toLocaleString()}</TableCell>
+                <TableCell className=' text-nowrap'>{new Date(agreement.date).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => openEditModal(agreement)}>

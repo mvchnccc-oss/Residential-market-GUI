@@ -189,7 +189,7 @@ export default function PropertiesPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -205,11 +205,11 @@ export default function PropertiesPage() {
           <TableBody>
             {filteredProperties.map((property) => (
               <TableRow key={property.id}>
-                <TableCell className="font-medium">{property.title}</TableCell>
-                <TableCell>{property.location}</TableCell>
-                <TableCell>{property.type}</TableCell>
-                <TableCell>EGP {property.price.toLocaleString()}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium text-nowrap">{property.title}</TableCell>
+                <TableCell className='text-nowrap'>{property.location}</TableCell>
+                <TableCell className='text-nowrap'>{property.type}</TableCell>
+                <TableCell className='text-nowrap'>EGP {property.price.toLocaleString()}</TableCell>
+                <TableCell className='text-nowrap'>
                   <Badge variant={
                     property.status === 'Available' ? 'default' :
                     property.status === 'Sold' ? 'secondary' : 'danger'

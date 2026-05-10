@@ -121,7 +121,7 @@ export default function ToursPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -136,11 +136,11 @@ export default function ToursPage() {
           <TableBody>
             {tours.map((tour) => (
               <TableRow key={tour.id}>
-                <TableCell className="font-medium">{getClientName(tour.clientId)}</TableCell>
-                <TableCell>{getPropertyTitle(tour.propertyId)}</TableCell>
-                <TableCell>{getRepresentativeName(tour.representativeId)}</TableCell>
-                <TableCell>{new Date(tour.date).toLocaleDateString()}</TableCell>
-                <TableCell>{tour.time}</TableCell>
+                <TableCell className="font-medium text-nowrap">{getClientName(tour.clientId)}</TableCell>
+                <TableCell className='text-nowrap'>{getPropertyTitle(tour.propertyId)}</TableCell>
+                <TableCell className='text-nowrap'>{getRepresentativeName(tour.representativeId)}</TableCell>
+                <TableCell className='text-nowrap'>{new Date(tour.date).toLocaleDateString()}</TableCell>
+                <TableCell className='text-nowrap'>{tour.time}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button size="sm" variant="default" onClick={() => handleFinalizeDeal(tour)}>

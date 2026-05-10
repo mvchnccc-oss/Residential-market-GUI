@@ -96,7 +96,7 @@ export default function ClientsPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -109,9 +109,9 @@ export default function ClientsPage() {
           <TableBody>
             {filteredClients.map((client) => (
               <TableRow key={client.id}>
-                <TableCell className="font-medium">{client.name}</TableCell>
-                <TableCell>{client.email}</TableCell>
-                <TableCell>{client.phone}</TableCell>
+                <TableCell className="font-medium text-nowrap">{client.name}</TableCell>
+                <TableCell className='text-nowrap'>{client.email}</TableCell>
+                <TableCell className='text-nowrap'>{client.phone}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => openEditModal(client)}>

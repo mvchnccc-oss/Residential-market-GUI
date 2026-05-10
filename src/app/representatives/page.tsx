@@ -99,7 +99,7 @@ export default function RepresentativesPage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -113,9 +113,9 @@ export default function RepresentativesPage() {
           <TableBody>
             {filteredRepresentatives.map((rep) => (
               <TableRow key={rep.id}>
-                <TableCell className="font-medium">{rep.name}</TableCell>
-                <TableCell>{rep.email}</TableCell>
-                <TableCell>{rep.phone}</TableCell>
+                <TableCell className="font-medium text-nowrap">{rep.name}</TableCell>
+                <TableCell className='text-nowrap'>{rep.email}</TableCell>
+                <TableCell className='text-nowrap'>{rep.phone}</TableCell>
                 <TableCell>{rep.experience}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
