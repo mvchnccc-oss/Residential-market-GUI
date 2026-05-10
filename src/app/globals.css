@@ -1,26 +1,157 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-heading);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Brand palette */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.4);
+  --radius-full: 9999px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Residential brand: deep navy + amber gold */
+  --brand:          oklch(0.78 0.16 75);   /* amber-400 */
+  --brand-foreground: oklch(0.18 0.03 240);
+
+  --background:     oklch(0.985 0 0);
+  --foreground:     oklch(0.15 0.015 250);
+
+  --card:           oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.015 250);
+
+  --popover:        oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.015 250);
+
+  /* Primary = navy */
+  --primary:        oklch(0.22 0.06 250);
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary:      oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.22 0.06 250);
+
+  --muted:          oklch(0.96 0.003 250);
+  --muted-foreground: oklch(0.50 0.02 250);
+
+  --accent:         oklch(0.96 0.005 250);
+  --accent-foreground: oklch(0.22 0.06 250);
+
+  --destructive:    oklch(0.58 0.24 27);
+
+  --border:         oklch(0.91 0.005 250);
+  --input:          oklch(0.91 0.005 250);
+  --ring:           oklch(0.78 0.16 75);  
+
+  --radius:         0.75rem;
+}
+
+
+.dark {
+  --background:     oklch(0.13 0.02 250);
+  --foreground:     oklch(0.96 0.005 250);
+
+  --card:           oklch(0.18 0.025 250);
+  --card-foreground: oklch(0.96 0.005 250);
+
+  --popover:        oklch(0.18 0.025 250);
+  --popover-foreground: oklch(0.96 0.005 250);
+
+  --primary:        oklch(0.96 0.005 250);
+  --primary-foreground: oklch(0.18 0.025 250);
+
+  --secondary:      oklch(0.22 0.03 250);
+  --secondary-foreground: oklch(0.96 0.005 250);
+
+  --muted:          oklch(0.22 0.03 250);
+  --muted-foreground: oklch(0.60 0.02 250);
+
+  --accent:         oklch(0.22 0.03 250);
+  --accent-foreground: oklch(0.96 0.005 250);
+
+  --destructive:    oklch(0.70 0.19 22);
+
+  --border:         oklch(1 0 0 / 10%);
+  --input:          oklch(1 0 0 / 15%);
+  --ring:           oklch(0.78 0.16 75);
+}
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Smooth scrollbar (webkit) */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/40; }
+}
+
+
+@layer utilities {
+  .font-heading { font-family: var(--font-heading), serif; }
+
+  
+  .text-gradient {
+    background: linear-gradient(135deg, oklch(0.78 0.16 75), oklch(0.88 0.12 60));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      to bottom,
+      oklch(0.13 0.05 250 / 50%) 0%,
+      oklch(0.13 0.05 250 / 80%) 60%,
+      oklch(0.13 0.05 250 / 100%) 100%
+    );
+  }
+
+
+  .glass {
+    @apply bg-white/8 backdrop-blur-md border border-white/15;
+  }
+
+
+  .card-lift {
+    @apply transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl;
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+html {
+  scroll-behavior: smooth;
 }

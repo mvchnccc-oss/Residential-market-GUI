@@ -1,65 +1,187 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useApp } from '@/contexts/AppContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+function StatCard({ title, value, description }: { title: string; value: string; description: string }) {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function Dashboard() {
+  const { properties, representatives, clients, tours, agreements } = useApp();
+
+  
+  const totalProperties = properties.length;
+  const availableProperties = properties.filter(p => p.status === 'Available').length;
+  const soldProperties = properties.filter(p => p.status === 'Sold').length;
+
+  const totalTours = tours.length;
+  const recentTours = tours.filter(t => {
+    const tourDate = new Date(t.date);
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    return tourDate >= oneMonthAgo;
+  }).length;
+
+  const propertiesWithoutTours = properties.filter(p =>
+    !tours.some(t => t.propertyId === p.id)
+  ).length;
+
+  const clientsWithoutTours = clients.filter(c =>
+    !tours.some(t => t.clientId === c.id)
+  ).length;
+
+  const styleCounts = properties.reduce((acc, p) => {
+    acc[p.type] = (acc[p.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const mostRequestedStyle = Object.entries(styleCounts).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
+
+  // Top representative by total deal value
+  const repDeals = representatives.map(rep => {
+    const repAgreements = agreements.filter(a => a.representativeId === rep.id);
+    const totalValue = repAgreements.reduce((sum, a) => sum + a.price, 0);
+    return { ...rep, totalValue };
+  });
+  const topRep = repDeals.sort((a, b) => b.totalValue - a.totalValue)[0];
+
+  // Units per representative
+  const unitsPerRep = representatives.map(rep => ({
+    name: rep.name,
+    units: properties.filter(p => p.representativeId === rep.id).length,
+  }));
+
+  // Total tours per client
+  const toursPerClient = clients.map(client => ({
+    name: client.name,
+    tours: tours.filter(t => t.clientId === client.id).length,
+  }));
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground">Overview of your residential marketplace</p>
+      </div>
+
+    
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        <StatCard
+          title="Total Properties"
+          value={totalProperties.toString()}
+          description={`${availableProperties} available, ${soldProperties} sold`}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <StatCard
+          title="Active Tours"
+          value={totalTours.toString()}
+          description={`${recentTours} in last month`}
+        />
+        <StatCard
+          title="Total Clients"
+          value={clients.length.toString()}
+          description={`${clientsWithoutTours} without tours`}
+        />
+        <StatCard
+          title="Completed Agreements"
+          value={agreements.length.toString()}
+          description="Successful deals"
+        />
+      </div>
+
+      {/* Analytics Cards */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Most Requested Property Style</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">{mostRequestedStyle}</div>
+            <p className="text-sm text-muted-foreground">
+              Based on property listings
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Properties Without Tours</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">{propertiesWithoutTours}</div>
+            <p className="text-sm text-muted-foreground">
+              Last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Top Representative</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {topRep ? `EGP ${(topRep.totalValue / 1000000).toFixed(1)}M` : 'N/A'}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {topRep?.name || 'No deals yet'}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Units per Representative</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {unitsPerRep.map((rep) => (
+                <div key={rep.name} className="flex justify-between text-sm">
+                  <span>{rep.name}</span>
+                  <span className="font-medium">{rep.units} units</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tours per Client</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {toursPerClient.map((client) => (
+                <div key={client.name} className="flex justify-between text-sm">
+                  <span>{client.name}</span>
+                  <span className="font-medium">{client.tours} tours</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Clients Without Tours</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">{clientsWithoutTours}</div>
+            <p className="text-sm text-muted-foreground">
+              Need attention
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
